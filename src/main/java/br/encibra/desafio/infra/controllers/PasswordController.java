@@ -30,4 +30,10 @@ public class PasswordController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(password));
     }
 
+    @PatchMapping("{id}")
+    public ResponseEntity<PasswordHttpResponse> update (@PathVariable Long id, @RequestBody PasswordHttpRequest request) throws Exception {
+        Password password = passwordService.update(id, request);
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.toResponse(password));
+    }
+
 }
