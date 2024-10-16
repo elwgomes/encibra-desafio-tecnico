@@ -1,15 +1,16 @@
 package br.encibra.desafio;
 
-import br.encibra.desafio.domain.entities.User;
-import br.encibra.desafio.domain.services.UserService;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.util.ArrayList;
+import br.encibra.desafio.domain.entities.User;
+import br.encibra.desafio.domain.services.UserService;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootApplication
@@ -21,7 +22,6 @@ public class DesafioApplication {
 		log.info("Application started");
 	}
 
-
 	@Autowired
 	private UserService service;
 
@@ -31,6 +31,5 @@ public class DesafioApplication {
 			service.save(new User(1L, "Leonardo", new ArrayList<>()));
 		};
 	}
-
 
 }

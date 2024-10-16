@@ -11,9 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PasswordHttpRequest {
 
-    private String description;
-    private String tags;
-    private String valor;
-    private Long userId;
+	private String description;
+	private String tags;
+	private String valor;
+	private Long userId;
 
 }
