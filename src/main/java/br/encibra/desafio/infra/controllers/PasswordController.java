@@ -5,12 +5,11 @@ import br.encibra.desafio.domain.services.PasswordService;
 import br.encibra.desafio.infra.mapper.PasswordHttpMapper;
 import br.encibra.desafio.infra.request.PasswordHttpRequest;
 import br.encibra.desafio.infra.response.PasswordHttpResponse;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("passwords")
@@ -26,7 +25,7 @@ public class PasswordController {
     }
 
     @PostMapping
-    public ResponseEntity<PasswordHttpResponse> create (@RequestBody PasswordHttpRequest request) {
+    public ResponseEntity<PasswordHttpResponse> create (@RequestBody PasswordHttpRequest request) throws Exception {
         Password password = passwordService.addPasswordToUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(password));
     }

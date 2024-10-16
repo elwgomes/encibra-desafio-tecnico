@@ -7,8 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserHttpResponse {
-
     private Long id;
     private String name;
-
 }

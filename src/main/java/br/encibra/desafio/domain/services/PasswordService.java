@@ -2,11 +2,13 @@ package br.encibra.desafio.domain.services;
 
 import br.encibra.desafio.domain.entities.Password;
 import br.encibra.desafio.domain.entities.User;
+import br.encibra.desafio.domain.util.AESUtil;
 import br.encibra.desafio.exceptions.PasswordLimitExceededException;
 import br.encibra.desafio.infra.mapper.PasswordHttpMapper;
 import br.encibra.desafio.infra.request.PasswordHttpRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,17 +21,17 @@ public class PasswordService {
 
     private final PasswordHttpMapper mapper;
     private final UserService userService;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final AESUtil aesUtil;
 
     @Transactional
-    public Password addPasswordToUser(PasswordHttpRequest request) {
+    public Password addPasswordToUser(PasswordHttpRequest request) throws Exception {
         User user = userService.findById(request.getUserId());
 
         validatePasswordLimit(user.getPasswords(), 20);
 
         char[] rawPassword = request.getValor().toCharArray();
         try {
-            char[] hashedPassword = passwordEncoder.encode(new String(rawPassword)).toCharArray();
+            char[] hashedPassword = aesUtil.encrypt(Arrays.toString(rawPassword));
             Password password = mapper.toDomain(request, user);
             password.setValor(hashedPassword);
             user.getPasswords().add(password);
