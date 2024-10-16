@@ -27,7 +27,7 @@ public class PasswordController {
 
     @PostMapping
     public ResponseEntity<PasswordHttpResponse> create (@RequestBody PasswordHttpRequest request) {
-        Password password = passwordService.create(request);
+        Password password = passwordService.addPasswordToUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(password));
     }
 

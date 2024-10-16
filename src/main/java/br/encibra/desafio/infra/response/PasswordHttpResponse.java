@@ -14,5 +14,4 @@ public class PasswordHttpResponse {
     private String description;
     private String tags;
     private String valor;
-    private User user;
 }

@@ -15,9 +15,13 @@ public class PasswordHttpMapper {
     private final ModelMapper map;
 
     public Password toDomain (PasswordHttpRequest request, User user) {
-        Password password = map.map(request, Password.class);
-        password.setUser(user);
-        return password;
+        return new Password(
+                null,
+                request.getDescription(),
+                request.getTags(),
+                request.getValor().toCharArray(),
+                user
+        );
     }
 
     public PasswordHttpResponse toResponse (Password password) {

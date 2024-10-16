@@ -2,7 +2,8 @@ package br.encibra.desafio.infra.request;
 
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserHttpRequest {

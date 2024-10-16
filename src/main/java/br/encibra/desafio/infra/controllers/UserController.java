@@ -25,7 +25,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserHttpResponse> create(@RequestBody UserHttpRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(userService.create(request)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(userService.save(mapper.toDomain(request))));
     }
 
 }
