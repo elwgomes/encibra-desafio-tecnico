@@ -5,7 +5,6 @@ import br.encibra.desafio.domain.services.PasswordService;
 import br.encibra.desafio.infra.mapper.PasswordHttpMapper;
 import br.encibra.desafio.infra.request.PasswordHttpRequest;
 import br.encibra.desafio.infra.response.PasswordHttpResponse;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +29,16 @@ public class PasswordController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(password));
     }
 
-    @PatchMapping("{id}")
-    public ResponseEntity<PasswordHttpResponse> update (@PathVariable Long id, @RequestBody PasswordHttpRequest request) throws Exception {
-        Password password = passwordService.update(id, request);
+    @PatchMapping("{passwordId}")
+    public ResponseEntity<PasswordHttpResponse> update (@PathVariable Long passwordId, @RequestBody PasswordHttpRequest request) throws Exception {
+        Password password = passwordService.update(passwordId, request);
         return ResponseEntity.status(HttpStatus.OK).body(mapper.toResponse(password));
+    }
+
+    @DeleteMapping("{passwordId}")
+    public ResponseEntity<Void> delete (@PathVariable Long passwordId) {
+        passwordService.delete(passwordId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
