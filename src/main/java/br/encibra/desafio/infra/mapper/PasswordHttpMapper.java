@@ -3,6 +3,7 @@ package br.encibra.desafio.infra.mapper;
 import br.encibra.desafio.domain.entities.Password;
 import br.encibra.desafio.domain.entities.User;
 import br.encibra.desafio.infra.request.PasswordHttpRequest;
+import br.encibra.desafio.infra.response.PasswordHttpResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,10 @@ public class PasswordHttpMapper {
         Password password = map.map(request, Password.class);
         password.setUser(user);
         return password;
+    }
+
+    public PasswordHttpResponse toResponse (Password password) {
+        return map.map(password, PasswordHttpResponse.class);
     }
 
 }
