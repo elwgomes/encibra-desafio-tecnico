@@ -8,8 +8,6 @@ import br.encibra.desafio.infra.mapper.PasswordHttpMapper;
 import br.encibra.desafio.infra.request.PasswordHttpRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -21,7 +19,7 @@ public class PasswordService {
 
     private final PasswordHttpMapper mapper;
     private final UserService userService;
-    private final AESUtil aesUtil;
+    private final EncryptionService encryptionService;
 
     @Transactional
     public Password addPasswordToUser(PasswordHttpRequest request) throws Exception {
@@ -29,18 +27,14 @@ public class PasswordService {
 
         validatePasswordLimit(user.getPasswords(), 20);
 
-        char[] rawPassword = request.getValor().toCharArray();
-        try {
-            char[] hashedPassword = aesUtil.encrypt(Arrays.toString(rawPassword));
-            Password password = mapper.toDomain(request, user);
-            password.setValor(hashedPassword);
-            user.getPasswords().add(password);
-            userService.save(user);
+        String rawPassword = request.getValor();
+        String hashedPassword = encryptionService.encrypt(rawPassword);
+        Password password = mapper.toDomain(request, user);
+        password.setValor(hashedPassword);
+        user.getPasswords().add(password);
+        userService.save(user);
 
-            return password;
-        } finally {
-            Arrays.fill(rawPassword, '0');
-        }
+        return password;
     }
 
     private void validatePasswordLimit (List<Password> passwords, Integer limit) {

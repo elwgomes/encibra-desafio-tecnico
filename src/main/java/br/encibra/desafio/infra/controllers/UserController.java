@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<UserHttpResponseWithList> read(@PathVariable Long id) {
+    public ResponseEntity<UserHttpResponseWithList> read(@PathVariable Long id) throws Exception {
             return ResponseEntity.status(HttpStatus.OK).body(mapper.toListResponse(userService.findById(id)));
     }
 

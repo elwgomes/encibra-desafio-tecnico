@@ -21,7 +21,7 @@ public class Password {
     private Long id;
     private String description;
     private String tags;
-    private char[] valor;
+    private String valor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

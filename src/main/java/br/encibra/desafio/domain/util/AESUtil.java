@@ -1,40 +1,46 @@
 package br.encibra.desafio.domain.util;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.MessageDigest;
+import javax.crypto.spec.GCMParameterSpec;
 import java.util.Base64;
 
-@Component
 public class AESUtil {
 
-    private static final String ALGORITHM = "AES";
+    private static SecretKey secretKey;
+    private static int KEY_SIZE = 128;
+    private static int T_LEN = 128;
 
-    @Value("${app.secret.key}")
-    private String secretKeyString;
-
-    public SecretKey getSecretKey(String keyString) throws Exception {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] key = digest.digest(keyString.getBytes("UTF-8"));
-        return new SecretKeySpec(key, ALGORITHM);
+    public static void init() throws Exception {
+        KeyGenerator generator = KeyGenerator.getInstance("AES");
+        generator.init(KEY_SIZE);
+        secretKey = generator.generateKey();
     }
 
-    public char[] encrypt(String data) throws Exception {
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(secretKeyString));
-        byte[] encryptedData = cipher.doFinal(data.getBytes());
-        return Base64.getEncoder().encodeToString(encryptedData).toCharArray();
+    public static String encrypt(String plainText) throws Exception {
+        byte[] messageInByte = plainText.getBytes();
+        Cipher encryptCipher = Cipher.getInstance("AES/GCM/NoPadding");
+        encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        byte[] encryptedBytes = encryptCipher.doFinal(messageInByte);
+        return encode(encryptedBytes);
     }
 
-    public char[] decrypt(String encryptedData) throws Exception {
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, getSecretKey(secretKeyString));
-        byte[] decryptedData = cipher.doFinal(Base64.getDecoder().decode(encryptedData));
-        return new String(decryptedData).toCharArray();
+    private static String encode(byte[] data) {
+        return Base64.getEncoder().encodeToString(data);
+    }
+
+    public static String decrypt(String encryptedText) throws Exception {
+        byte[] encryptedBytes = decode(encryptedText);
+        Cipher decryptCipher = Cipher.getInstance("AES/GCM/NoPadding");
+        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(T_LEN, encryptedBytes);
+        decryptCipher.init(Cipher.DECRYPT_MODE, secretKey, gcmParameterSpec);
+        byte[] decryptedBytes = decryptCipher.doFinal(encryptedBytes);
+        return new String(decryptedBytes);
+    }
+
+    private static byte[] decode(String encryptedText) throws Exception {
+        return Base64.getDecoder().decode(encryptedText);
     }
 
 }

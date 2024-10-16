@@ -19,7 +19,7 @@ public class PasswordHttpMapper {
                 null,
                 request.getDescription(),
                 request.getTags(),
-                request.getValor().toCharArray(),
+                request.getValor(),
                 user
         );
     }
