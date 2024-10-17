@@ -2,6 +2,9 @@ package br.encibra.desafio;
 
 import java.util.ArrayList;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,6 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootApplication
+@OpenAPIDefinition(
+		info = @Info(
+				title = "Encibra Desafio Técnico",
+				version = "1.0",
+				description = "API Documentation",
+				contact = @Contact(name = "Leonardo Gomes", email = "contato.elwgomes@gmail.com")
+		)
+)
 public class DesafioApplication {
 
 	public static void main(String[] args) {

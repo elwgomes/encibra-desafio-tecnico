@@ -9,6 +9,10 @@ import br.encibra.desafio.infra.request.PasswordHttpRequest;
 import br.encibra.desafio.infra.response.PasswordHttpResponse;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class PasswordHttpMapper {
@@ -22,6 +26,15 @@ public class PasswordHttpMapper {
 				request.getTags(),
 				request.getValor(),
 				user);
+	}
+
+	public List<PasswordHttpResponse> toListResponse(List<Password> passwordList) {
+		List<PasswordHttpResponse> responseList = new ArrayList<>();
+		for (Password password : passwordList) {
+			PasswordHttpResponse response = toResponse(password);
+			responseList.add(response);
+		}
+		return responseList;
 	}
 
 	public PasswordHttpResponse toResponse(Password password) {

@@ -28,16 +28,18 @@ public class PasswordService {
 	private final PasswordHttpMapper mapper;
 	private final UserService userService;
 	private final EncryptionService encryptionService;
+	private final TokenService tokenService;
+
+	private static final int PASSWORD_LIMIT = 20;
 
 	@Transactional
-	public Password addPasswordToUser(PasswordHttpRequest request) throws Exception {
-		log.info("Starting to add password for user with ID: {}", request.getUserId());
-		User user = userService.findById(request.getUserId());
+	public Password addPasswordToUser(PasswordHttpRequest request, String token) {
+		Long userId = validateTokenAndGetUserId(token);
+		User user = userService.findById(userId);
 
-		validatePasswordLimit(user.getPasswords(), 20);
+		validatePasswordLimit(user.getPasswords(), PASSWORD_LIMIT);
 
-		String rawPassword = request.getValor();
-		String hashedPassword = encryptionService.encrypt(rawPassword);
+		String hashedPassword = encryptPassword(request.getValor());
 		Password password = mapper.toDomain(request, user);
 		password.setValor(hashedPassword);
 		user.getPasswords().add(password);
@@ -48,48 +50,72 @@ public class PasswordService {
 	}
 
 	@Transactional
-	public Password update(Long id, PasswordHttpRequest obj) {
-		log.info("Updating password with ID: {}", id);
-		Password entity = passwordRepository.findById(id)
-				.orElseThrow(() -> {
-					log.error("Password not found with ID: {}", id);
-					return new ResourceNotFoundException(id);
-				});
+	public Password update(Long id, PasswordHttpRequest obj, String token) {
+		Long userId = validateTokenAndGetUserId(token);
+
+		Password entity = findPasswordByIdAndUserId(id, userId);
 		updateEntity(entity, obj);
+
 		Password updatedPassword = passwordRepository.save(entity);
 		log.info("Password successfully updated, ID: {}", updatedPassword.getId());
-		return passwordRepository.save(entity);
+		return updatedPassword;
 	}
 
 	@Transactional
-	public void delete(Long id) {
-		log.info("Attempting to delete password with ID: {}", id);
+	public void delete(Long id, String token) {
+		Long userId = validateTokenAndGetUserId(token);
+		Password password = findPasswordByIdAndUserId(id, userId);
+
 		try {
 			passwordRepository.deleteById(id);
 			log.info("Password successfully deleted, ID: {}", id);
-		} catch (EmptyResultDataAccessException exception) {
-			log.error("Error deleting password: password not found with ID: {}", id);
-			throw new ResourceNotFoundException(id);
 		} catch (DataIntegrityViolationException exception) {
 			log.error("Error deleting password: database integrity violation for ID: {}", id);
 			throw new DatabaseException(exception.getMessage());
+		} catch (EmptyResultDataAccessException exception) {
+			log.error("Error deleting password: password not found with ID: {}", id);
+			throw new ResourceNotFoundException(id);
 		}
+	}
+
+	public List<Password> findAll(String token) {
+		Long userId = validateTokenAndGetUserId(token);
+		log.info("Starting to find all passwords for user ID: {}", userId);
+		List<Password> list = passwordRepository.findAllByUserId(userId);
+		log.info("Passwords found for user ID: {}", userId);
+		return list;
 	}
 
 	private void updateEntity(Password entity, PasswordHttpRequest obj) {
 		Optional.ofNullable(obj.getDescription()).ifPresent(entity::setDescription);
 		Optional.ofNullable(obj.getTags()).ifPresent(entity::setTags);
 		Optional.ofNullable(obj.getValor()).ifPresent(rawPassword -> {
-			String hashedPassword;
-			try {
-				hashedPassword = encryptionService.encrypt(rawPassword);
-				entity.setValor(hashedPassword);
-				log.info("Password successfully updated for ID: {}", entity.getId());
-			} catch (Exception e) {
-				log.error("Error encrypting the password for ID: {}", entity.getId(), e);
-				throw new RuntimeException(e);
-			}
+			String hashedPassword = encryptPassword(rawPassword);
+			entity.setValor(hashedPassword);
 		});
+	}
+
+	private String encryptPassword(String rawPassword) {
+		try {
+			return encryptionService.encrypt(rawPassword);
+		} catch (Exception e) {
+			log.error("Error encrypting the password", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	private Password findPasswordByIdAndUserId(Long passwordId, Long userId) {
+		return passwordRepository.findById(passwordId).filter(p -> p.getUser().getId().equals(userId))
+				.orElseThrow(() -> {
+					log.error("Password not found or does not belong to user with ID: {}", userId);
+					return new ResourceNotFoundException(passwordId);
+				});
+	}
+
+	private Long validateTokenAndGetUserId(String token) {
+		Long userId = Long.valueOf(tokenService.validateJwtToken(token));
+		log.info("User ID from token: {}", userId);
+		return userId;
 	}
 
 	private void validatePasswordLimit(List<Password> passwords, Integer limit) {
@@ -99,5 +125,4 @@ public class PasswordService {
 					"The user has reached the maximum of " + limit + " passwords allowed.");
 		}
 	}
-
 }

@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PasswordHttpResponse {
+	private Long id;
 	private String description;
 	private String tags;
 	private String valor;
