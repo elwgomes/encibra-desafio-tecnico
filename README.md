@@ -19,6 +19,10 @@ Vá ao diretório raiz e execute no terminal:
 ```
 $ docker compose up -d
 ```
+para acompanhar o console:
+```
+$ docker-compose logs -f 
+```
 ou, também no diretório raiz:
 
 ```
