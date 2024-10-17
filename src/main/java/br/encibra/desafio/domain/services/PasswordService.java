@@ -45,8 +45,15 @@ public class PasswordService {
 		user.getPasswords().add(password);
 		userService.save(user);
 
+		Password savedPassword = user.getPasswords()
+				.stream()
+				.filter(p -> p.getValor().equals(hashedPassword))
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("Erro ao salvar a senha"));
+
+
 		log.info("Password successfully added for user ID: {}", user.getId());
-		return password;
+		return savedPassword;
 	}
 
 	@Transactional
