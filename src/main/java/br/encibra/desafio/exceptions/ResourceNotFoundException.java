@@ -1,7 +1,14 @@
 package br.encibra.desafio.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
-	public ResourceNotFoundException(Object id) {
-		super("Resource not found. Id " + id);
+	private final Long resourceId;
+
+	public ResourceNotFoundException(Long resourceId) {
+		super("Resource not found with ID: " + resourceId);
+		this.resourceId = resourceId;
+	}
+
+	public Long getResourceId() {
+		return resourceId;
 	}
 }

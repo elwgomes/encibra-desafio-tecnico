@@ -118,7 +118,7 @@ public class PasswordService {
 		return userId;
 	}
 
-	private void validatePasswordLimit(List<Password> passwords, Integer limit) {
+	public void validatePasswordLimit(List<Password> passwords, Integer limit) {
 		if (passwords.size() >= limit) {
 			log.warn("Password limit exceeded for user: maximum of {} passwords allowed.", limit);
 			throw new PasswordLimitExceededException(
