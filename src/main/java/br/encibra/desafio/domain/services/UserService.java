@@ -1,18 +1,13 @@
 package br.encibra.desafio.domain.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import br.encibra.desafio.domain.entities.Password;
-import br.encibra.desafio.exceptions.PasswordDecryptionException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import br.encibra.desafio.domain.entities.User;
 import br.encibra.desafio.domain.repositories.UserRepository;
+import br.encibra.desafio.exceptions.PasswordDecryptionException;
 import br.encibra.desafio.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -60,8 +55,10 @@ public class UserService {
 					password.setValor(decryptedValue);
 					log.info("Password decrypted for user ID: {}, password value: {}", user.getId(), decryptedValue);
 				} catch (Exception e) {
-					log.error("Error decrypting password with value: {} for user ID: {}", password.getValor(), user.getId(), e);
-					throw new PasswordDecryptionException("Error decrypting password with value " + password.getValor(), e);
+					log.error("Error decrypting password with value: {} for user ID: {}", password.getValor(),
+							user.getId(), e);
+					throw new PasswordDecryptionException("Error decrypting password with value " + password.getValor(),
+							e);
 				}
 			});
 		} else {

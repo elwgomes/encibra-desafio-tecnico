@@ -3,7 +3,6 @@ package br.encibra.desafio.domain.services;
 import java.util.List;
 import java.util.Optional;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,7 @@ import br.encibra.desafio.infra.mapper.PasswordHttpMapper;
 import br.encibra.desafio.infra.request.PasswordHttpRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

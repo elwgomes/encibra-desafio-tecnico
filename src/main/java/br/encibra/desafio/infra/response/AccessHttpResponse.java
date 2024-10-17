@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccessHttpResponse {
-    private String accessToken;
+	private String accessToken;
 }

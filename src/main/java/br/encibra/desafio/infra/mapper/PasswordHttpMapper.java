@@ -1,5 +1,8 @@
 package br.encibra.desafio.infra.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -8,10 +11,6 @@ import br.encibra.desafio.domain.entities.User;
 import br.encibra.desafio.infra.request.PasswordHttpRequest;
 import br.encibra.desafio.infra.response.PasswordHttpResponse;
 import lombok.RequiredArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
