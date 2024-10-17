@@ -1,6 +1,6 @@
 # encibra-desafio-tecnico
 
-## Tecnologias
+### Tecnologias
 - Java 17
 - Spring Boot 3.3.4
     - spring-boot-starter-web
@@ -14,7 +14,7 @@
 - Tomcat (embedded on spring Boot)
 - Git (code versioning)
 
-## Como rodar
+### Execute
 Vá ao diretório raiz e execute no terminal:
 ```
 $ docker compose up -d
