@@ -51,6 +51,9 @@ public class PasswordController {
 			throws Exception {
 		String token = authorizationHeader.replace("Bearer ", "");
 		List<PasswordHttpResponse> list = mapper.toListResponse(passwordService.findAll(token));
+
+		System.out.println(list);
+
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
 
