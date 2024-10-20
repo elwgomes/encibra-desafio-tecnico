@@ -2,6 +2,7 @@ package br.encibra.desafio.infra.controllers.exceptions.handling;
 
 import java.time.Instant;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,6 +15,16 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ErrorDetail> dataIntegrityViolation(DataIntegrityViolationException e,
+			HttpServletRequest request) {
+		String error = "DATA INTEGRITY VIOLATION";
+		HttpStatus status = HttpStatus.CONFLICT;
+		ErrorDetail err = new ErrorDetail(Instant.now(), status.value(), error, e.getMessage(),
+				request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<ErrorDetail> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {

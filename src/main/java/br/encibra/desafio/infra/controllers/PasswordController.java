@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,7 +37,6 @@ import lombok.RequiredArgsConstructor;
 public class PasswordController {
 
 	private final PasswordService passwordService;
-	private final TokenService tokenService;
 	private final PasswordHttpMapper mapper;
 
 	@Operation(summary = "Retrieve all passwords", description = "This endpoint retrieves all passwords associated with the authenticated user.")
@@ -65,7 +65,7 @@ public class PasswordController {
 	@PostMapping("create")
 	public ResponseEntity<PasswordHttpResponse> create(
 			@Parameter(description = "Bearer token for authentication", required = true) @RequestHeader("Authorization") String authorizationHeader,
-			@Parameter(description = "Details of the password to create", required = true) @RequestBody PasswordHttpRequest request)
+			@Parameter(description = "Details of the password to create", required = true) @Valid @RequestBody PasswordHttpRequest request)
 			throws Exception {
 		String token = authorizationHeader.replace("Bearer ", "");
 		Password password = passwordService.addPasswordToUser(request, token);
@@ -83,7 +83,7 @@ public class PasswordController {
 	public ResponseEntity<PasswordHttpResponse> update(
 			@Parameter(description = "ID of the password to update", required = true) @PathVariable Long passwordId,
 			@Parameter(description = "Bearer token for authentication", required = true) @RequestHeader("Authorization") String authorizationHeader,
-			@Parameter(description = "Details of the password to update", required = true) @RequestBody PasswordHttpRequest request)
+			@Parameter(description = "Details of the password to update", required = true) @Valid @RequestBody PasswordHttpRequest request)
 			throws Exception {
 		String token = authorizationHeader.replace("Bearer ", "");
 		Password password = passwordService.update(passwordId, request, token);
