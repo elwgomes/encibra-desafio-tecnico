@@ -2,6 +2,7 @@ package br.encibra.desafio.domain.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -51,7 +52,6 @@ public class PasswordService {
 				.findFirst()
 				.orElseThrow(() -> new RuntimeException("Erro ao salvar a senha"));
 
-
 		log.info("Password successfully added for user ID: {}", user.getId());
 		return savedPassword;
 	}
@@ -89,8 +89,17 @@ public class PasswordService {
 		Long userId = validateTokenAndGetUserId(token);
 		log.info("Starting to find all passwords for user ID: {}", userId);
 		List<Password> list = passwordRepository.findAllByUserId(userId);
+
+		List<Password> decryptedList = list.stream()
+				.map(password -> {
+					String decryptedValue = decryptPassword(password.getValor());
+					password.setValor(decryptedValue);
+					return password;
+				})
+				.collect(Collectors.toList());
+
 		log.info("Passwords found for user ID: {}", userId);
-		return list;
+		return decryptedList;
 	}
 
 	private void updateEntity(Password entity, PasswordHttpRequest obj) {
@@ -100,6 +109,15 @@ public class PasswordService {
 			String hashedPassword = encryptPassword(rawPassword);
 			entity.setValor(hashedPassword);
 		});
+	}
+
+	private String decryptPassword(String encryptedPassword) {
+		try {
+			return encryptionService.decrypt(encryptedPassword);
+		} catch (Exception e) {
+			log.error("Error decrypting the password", e);
+			throw new RuntimeException(e);
+		}
 	}
 
 	private String encryptPassword(String rawPassword) {
