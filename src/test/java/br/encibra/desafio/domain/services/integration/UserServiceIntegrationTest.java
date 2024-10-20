@@ -20,28 +20,30 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class UserServiceIntegrationTest {
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @Autowired
-    private EncryptionService encryptionService;
+	@Autowired
+	private EncryptionService encryptionService;
 
-    @Test
-    void testSaveAndDecryptUserPasswords() throws Exception {
-        User user = new User();
-        user.setId(1L);
-        user.setName("Test User");
-        Password password = new Password();
-        String plainPassword = "mySecretPassword";
-        String encryptedPassword = encryptionService.encrypt(plainPassword);
-        password.setValor(encryptedPassword);
-        password.setUser(user);
-        user.setPasswords(List.of(password));
-        User savedUser = userService.save(user);
-        assertNotNull(savedUser.getId());
-        assertNotEquals(plainPassword, savedUser.getPasswords().get(0).getValor());
-        User decryptedUser = userService.findByIdWithDecrypt(savedUser.getId());
-        assertEquals(plainPassword, decryptedUser.getPasswords().get(0).getValor());
-    }
+	@Test
+	void testSaveAndDecryptUserPasswords() throws Exception {
+		User user = new User();
+		user.setId(1L);
+		user.setName("Test User");
+		Password password = new Password();
+		String plainPassword = "mySecretPassword";
+		String encryptedPassword = encryptionService.encrypt(plainPassword);
+		password.setValor(encryptedPassword);
+		password.setDescription("m0ckp4ssw0rd");
+		password.setTags("Mock, Password");
+		password.setUser(user);
+		user.setPasswords(List.of(password));
+		User savedUser = userService.save(user);
+		assertNotNull(savedUser.getId());
+		assertNotEquals(plainPassword, savedUser.getPasswords().get(0).getValor());
+		User decryptedUser = userService.findByIdWithDecrypt(savedUser.getId());
+		assertEquals(plainPassword, decryptedUser.getPasswords().get(0).getValor());
+	}
 
 }
